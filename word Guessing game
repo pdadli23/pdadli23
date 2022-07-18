@@ -1,0 +1,70 @@
+words = ['Donkey', 'Aeroplane', 'America', 'Program',
+          'Python', 'language', 'Cricket', 'Football',
+          'Hockey', 'Spaceship', 'bus', 'flight']
+
+import random
+
+def split(word):
+    return list(word)
+
+def choose_word(words):
+    word = random.choice(words).lower()
+    return word
+
+def incompleteWord(word):
+    splitted_chosen_word = split(word)
+    length = len(splitted_chosen_word)
+
+    if length < 4:
+        random_indexes = [1]
+    else:
+        random_indexes = random.sample(range(1, length-1), round(length / 3))
+    random_indexes.sort()
+    hidden_letters = [{},[]]
+    for i in random_indexes:
+        hidden_letters[0][splitted_chosen_word[i]] = i
+        splitted_chosen_word[i] = '_'
+
+
+
+    hidden_letters[1].append(splitted_chosen_word)
+    print(hidden_letters)
+    return hidden_letters
+
+random_word = choose_word(words)
+incompleteWord = incompleteWord(random_word)
+
+def game():
+    chance = 3
+    game_over = False
+    while not game_over and chance > 0:
+        print(f"Chances: {chance}")
+        guess = input(f'guess the word: "{incompleteWord[1][0]}": ')
+
+        try:
+            if incompleteWord[0][guess]:
+                incompleteWord[1][0][incompleteWord[0][guess]] = guess
+                for i in range(1, incompleteWord[0][guess]):
+                    if incompleteWord[1][0][i] == '_':
+                        chance -= 1
+                        incompleteWord[1][0][incompleteWord[0][guess]] = '_'
+                        print("This word contain this letter but not at this index")
+                        if chance == 1:
+                            print("you lost")
+                            game_over = True
+                        break
+                word_in_progress = ''.join(incompleteWord[1][0])
+                if not word_in_progress.__contains__('_'):
+                    print(word_in_progress)
+                    print("You Won !!")
+                    game_over = True
+
+        except KeyError:
+            if chance == 1:
+                print("you lost")
+                game_over = True
+            else:
+                print("This word don't contain this letter")
+                chance -= 1
+
+game()
